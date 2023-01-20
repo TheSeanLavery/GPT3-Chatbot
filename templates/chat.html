@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat Interface</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+ 
+  </head>
+  <body>
+    <md-block>
+    
+      <div>
+
+      </div>
+
+    </md-block>
+
+    <script>
+      var chatHistory = ""
+      $(document).ready(function() {
+        // Bind function to form's submit event
+        $("form").on("submit", function(e) {
+          console.log("Form submitted");
+          e.preventDefault();
+          // Get the message from the input field
+          var message = $("input[name='message']").val();
+          // Send the message and history to the backend via a POST request
+          var chatBody = marked.parse(chatHistory+"\r\n"+"You: " + message + "\r\n")
+          $("#response").html(chatBody);
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/api/messages",
+            contentType: "application/json",
+            data: JSON.stringify({
+                message: message,
+                chatHistory: chatHistory
+            }),
+            success: function(response) {
+              console.log("Response received");
+              // Display the response in the #response div
+              var ai_response = response["choices"][0]["text"];
+              
+              chatHistory += "\r\n You: " + message + "\r\n" + ai_response + "\r\n";
+              
+              var formattedChatHistory = marked.parse(chatHistory);
+              
+              $("#response").html(formattedChatHistory);
+            }
+          });
+        });
+      });
+          
+    </script>
+    
+  </body>
+  
+  <body>
+    <form>
+      <input type="text" name="message" placeholder="Enter your message here">
+      <input type="submit" value="Send">
+    </form>
+    <div id="response"></div>
+  </body>
+</html>

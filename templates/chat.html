@@ -25,6 +25,7 @@
           e.preventDefault();
           // Get the message from the input field
           var message = $("input[name='message']").val();
+          $("input[name='message']").val("");
           // Send the message and history to the backend via a POST request
           var chatBody = marked.parse(chatHistory+"\r\n"+"You: " + message + "\r\n")
           $("#response").html(chatBody);
@@ -57,7 +58,7 @@
   
   <body>
     <form>
-      <input type="text" name="message" placeholder="Enter your message here">
+      <input type="text" name="message" placeholder="Enter your message here" autocomplete="off">
       <input type="submit" value="Send">
     </form>
     <div id="response"></div>
